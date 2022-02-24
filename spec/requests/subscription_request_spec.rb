@@ -72,4 +72,143 @@ describe 'subscription requests' do
       expect(response.status).to eq 404
     end
   end
+
+  describe 'POST /customers/:customer_id/subscriptions' do
+    it 'can create a subscription' do
+      params = {
+        frequency: 'weekly',
+        title: 'My Subscription',
+        teas: [
+          {
+            id: @tea_1.id,
+            price: 1,
+            quantity: 2
+          },
+          {
+            id: @tea_2.id,
+            price: 3,
+            quantity: 1
+           }
+        ]
+      }
+
+      headers = {
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json'
+      }
+
+      post customer_subscriptions_path(@customer), params: params, as: :json, headers: headers
+
+      subscription = Subscription.last
+
+      body = JSON.parse(response.body, symbolize_names: true)
+      data = body[:data]
+
+      expect(response.status).to eq 201
+
+      expect(data[:id]).to eq subscription.id
+      expect(data[:title]).to eq subscription.title
+      expect(data[:status]).to eq subscription.status
+      expect(data[:frequency]).to eq subscription.frequency
+      expect(data[:price]).to eq 5
+
+      expect(data[:teas]).to be_a Array
+      expect(data[:teas].length).to eq 2
+
+      expect(data[:teas][0][:id]).to eq @tea_1.id
+      expect(data[:teas][0][:title]).to eq @tea_1.title
+      expect(data[:teas][0][:description]).to eq @tea_1.description
+      expect(data[:teas][0][:temperature]).to eq @tea_1.temperature
+      expect(data[:teas][0][:brew_time]).to eq @tea_1.brew_time
+    end
+
+    it 'returns an error if the params are invalid' do
+      params = {
+        frequency: 9,
+        title: 'My Subscription',
+        teas: [
+          {
+            id: @tea_1.id,
+            price: 1,
+            quantity: 2
+          },
+          {
+            id: @tea_2.id,
+            price: 3,
+            quantity: 1
+           }
+        ]
+      }
+
+      headers = {
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json'
+      }
+
+      post customer_subscriptions_path(@customer), params: params, as: :json, headers: headers
+
+      expect(response.status).to eq 422
+      expect(response.body).to match(/'9' is not a valid frequency/)
+    end
+
+    it 'returns an error if one of the teas is invalid' do
+      params = {
+        frequency: 'weekly',
+        title: 'My Subscription',
+        teas: [
+          {
+            id: @tea_1.id,
+            price: 1,
+            quantity: 2
+          },
+          {
+            id: (@tea_5.id + 1),
+            price: 3,
+            quantity: 1
+           }
+        ]
+      }
+
+      headers = {
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json'
+      }
+
+      post customer_subscriptions_path(@customer), params: params, as: :json, headers: headers
+
+      expect(response.status).to eq 404
+      expect(response.body).to match(/Couldn't find Tea with 'id'=/)
+    end
+
+    it 'returns an error if the customer id is invalid' do
+      params = {
+        frequency: 'weekly',
+        title: 'My Subscription',
+        teas: [
+          {
+            id: @tea_1.id,
+            price: 1,
+            quantity: 2
+          },
+          {
+            id: @tea_2.id,
+            price: 3,
+            quantity: 1
+           }
+        ]
+      }
+
+      headers = {
+        'Content-Type' => 'application/json',
+        'Accept' => 'application/json'
+      }
+
+      id = Customer.last.id + 1
+
+      post "/customers/#{id}/subscriptions", params: params, as: :json, headers: headers
+
+      expect(response.status).to eq 422
+      expect(response.body).to match(/Validation failed: Customer must exist/)
+    end
+  end
 end

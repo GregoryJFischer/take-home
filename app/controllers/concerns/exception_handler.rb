@@ -9,5 +9,9 @@ module ExceptionHandler
     rescue_from ActiveRecord::RecordInvalid do |e|
       render json: { error: e.message }, status: 422
     end
+
+    rescue_from ArgumentError do |e|
+      render json: { error: e.message }, status: 422
+    end
   end
 end
