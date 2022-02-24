@@ -1,7 +1,7 @@
 FactoryBot.define do
   factory :subscription do
     title {Faker::Lorem.sentence}
-    frequency {Faker::Number.number(digits: 1)}
+    frequency {[0,1,2].sample}
     customer
   end
 end

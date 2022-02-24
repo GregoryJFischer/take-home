@@ -11,7 +11,7 @@ describe Subscription, type: :model do
     subscription = create(:subscription)
 
     expect(subscription.title).to be_a String
-    expect(subscription.status).to eq 0
+    expect(subscription.status).to eq 'active'
     expect(subscription.frequency).to be_a Integer
   end
 end
