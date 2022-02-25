@@ -1,4 +1,4 @@
-# Sweater Weather
+# Take Home Practice
 
 ## Overview
 An application that handles tea subscriptions for a ficticious company
@@ -41,14 +41,14 @@ Status: 200
                 {
                     "id": 1,
                     "title": "Earl Grey",
-                    "description": null,
+                    "description": "black tea",
                     "temperature": 90,
                     "brew_time": 180
                 },
                 {
                     "id": 3,
                     "title": "Camomile",
-                    "description": null,
+                    "description": "herbal tea",
                     "temperature": 70,
                     "brew_time": 300
                 }
