@@ -96,14 +96,14 @@ Status: 201
             {
                 "id": 1,
                 "title": "Earl Grey",
-                "description": null,
+                "description": "black tea",
                 "temperature": 90,
                 "brew_time": 180
             },
             {
                 "id": 3,
                 "title": "Camomile",
-                "description": null,
+                "description": "green tea",
                 "temperature": 70,
                 "brew_time": 300
             }
